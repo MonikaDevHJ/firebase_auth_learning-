@@ -21,16 +21,27 @@ export default function DashboardPage() {
     router.push("/login");
   };
 
-  if (loading) return <p>Loading...</p>;
-
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
   if (!user) return null;
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h1>Dashboard</h1>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="bg-white shadow-2xl rounded-2xl p-10 text-center w-full max-w-lg">
+        <h1 className="text-3xl font-bold mb-4 text-gray-800">
+          Dashboard
+        </h1>
 
-      <p>Welcome, {user.displayName || user.email}</p>
-      <button onClick={handleLogout}>Logout</button>
+        <p className="text-lg text-gray-600 mb-6">
+          Welcome, <span className="font-semibold">{user.displayName || user.email}</span>
+        </p>
+
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition duration-300"
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 }
