@@ -1,27 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged, signOut, User } from "firebase/auth";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useAuth } from "@/context/AuthContext";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (!currentUser) {
-        router.push("/login");
-      } else {
-        setUser(currentUser);
-      }
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [router]);
+    if (!loading && !user) {
+      router.push("/login");
+    }
+  }, [user, loading, router]);
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -30,16 +23,14 @@ export default function DashboardPage() {
 
   if (loading) return <p>Loading...</p>;
 
+  if (!user) return null;
+
   return (
     <div style={{ padding: "40px" }}>
       <h1>Dashboard</h1>
 
-      {user && (
-        <>
-          <p>Welcome, {user.displayName || user.email}</p>
-          <button onClick={handleLogout}>Logout</button>
-        </>
-      )}
+      <p>Welcome, {user.displayName || user.email}</p>
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }
